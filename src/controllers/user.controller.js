@@ -5,7 +5,7 @@ const environments = require("../environments/environment");
 const jwt = require("jsonwebtoken");
 const authorize = require("../middleware/authorize");
 const { Encrypt } = require("../helpers/cryptography");
-
+const axios = require("axios");
 exports.login = async function (req, res) {
   const { email, password } = req.body;
   const user = await User.findByUsernameAndEmail(email);
@@ -90,10 +90,36 @@ exports.logout = function (req, res) {
 
 exports.verifyToken = async function (req, res) {
   try {
-    const token = req.params.token;
+    const { token, domain } = req.body;
+    // const token = req.params.token;
+    console.log(domain, token);
     const decoded = jwt.verify(token, environments.JWT_SECRET_KEY);
+    console.log(decoded.user);
     if (decoded.user) {
-      res.status(200).send({ message: "Authorized User", verifiedToken: true });
+      const apiUrl = `https://dev-api.${domain}/api/v1/customers/profile/${decoded.user.id}`;
+      console.log(apiUrl);
+      axios
+        .get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          // Handle successful response
+          console.log(response.data);
+          res.status(200).send({
+            message: "Authorized User",
+            success: true,
+            data: response?.data?.data[0],
+          });
+        })
+        .catch((error) => {
+          // Handle error
+          res.status(error.response.status).send({
+            message: error.response.statusText,
+            success: false,
+          });
+        });
     } else {
       res
         .status(401)

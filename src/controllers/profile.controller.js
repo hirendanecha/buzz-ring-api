@@ -26,3 +26,12 @@ exports.getNotification = async function (req, res) {
     data: data,
   });
 };
+
+exports.callNotification = async function (req, res) {
+  const { id } = req.params;
+  const data = await Profile.callNotification(id);
+  return res.send({
+    error: false,
+    data: data,
+  });
+};
