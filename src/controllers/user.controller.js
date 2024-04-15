@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const authorize = require("../middleware/authorize");
 const { Encrypt } = require("../helpers/cryptography");
 const axios = require("axios");
+const admin = require("firebase-admin");
 exports.login = async function (req, res) {
   const { email, password } = req.body;
   const user = await User.findByUsernameAndEmail(email);
@@ -90,7 +91,7 @@ exports.logout = function (req, res) {
 
 exports.verifyToken = async function (req, res) {
   try {
-    const { token, domain } = req.body;
+    const { token, domain, deviceId } = req.body;
     // const token = req.params.token;
     console.log(domain, token);
     const decoded = jwt.verify(token, environments.JWT_SECRET_KEY);
@@ -104,17 +105,34 @@ exports.verifyToken = async function (req, res) {
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((response) => {
+        .then(async (response) => {
           // Handle successful response
-          console.log(response.data);
+          const data = {
+            deviceId: deviceId,
+            profileId: decoded.user.id,
+            domain: domain,
+          };
+          const oldUser = await User.findById(
+            decoded.user.id,
+            domain,
+            deviceId
+          );
+          console.log("old-user", oldUser);
+          if (!oldUser) {
+            const newUser = await User.addSites(data);
+            console.log("newUser", newUser);
+          }
           res.status(200).send({
             message: "Authorized User",
             success: true,
+            registerDeviceId: deviceId,
             data: response?.data?.data[0],
+            domain: domain,
           });
         })
         .catch((error) => {
           // Handle error
+          console.log(error);
           res.status(error.response.status).send({
             message: error.response.statusText,
             success: false,
@@ -127,5 +145,59 @@ exports.verifyToken = async function (req, res) {
     }
   } catch (err) {
     res.status(401).json({ message: "Invalid token", verifiedToken: false });
+  }
+};
+
+exports.callNotification = async function (req, res) {
+  try {
+    const messageData = req.body;
+    console.log(messageData);
+    const users = await User.findFcmTokenById(
+      messageData.notificationToProfileId,
+      messageData.domain
+    );
+    for (const token of users) {
+      const message = {
+        data: { title: "call notification", body: JSON.stringify(messageData) },
+        token: token.fcmToken,
+      };
+      admin
+        .messaging()
+        .send(message)
+        .then((response) => {
+          console.log("Successfully sent message:", response);
+        })
+        .catch((error) => {
+          console.log("Error sending message:", error);
+          res.status(error.errorCode).send("Error sending notification");
+        });
+      // }
+    }
+    console.log("users", users);
+    // for (const item of users) {
+    // const token = item.fcmToken;
+
+    res.send("Notification sent");
+  } catch (error) {
+    console.log(error);
+    res.status(error.errorCode).send(error);
+  }
+
+  // return res.send({
+  //   error: false,
+  //   data: data,
+  // });
+};
+
+exports.registerDevice = async function (req, res) {
+  try {
+    const data = req.body;
+    const id = await User.registerDevice(data);
+    return res.send({
+      error: false,
+      registerDeviceId: id,
+    });
+  } catch (error) {
+    res.status(error.errorCode).send(error);
   }
 };

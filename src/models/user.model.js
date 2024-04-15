@@ -4,20 +4,8 @@ require("../common/common")();
 const { executeQuery } = require("../helpers/utils");
 
 var User = function (user) {
-  this.Email = user.Email;
-  this.Username = user.Username;
-  this.Password = user.Password;
-  this.IsActive = user.IsActive || "N";
-  this.IsAdmin = user.IsAdmin || "N";
-  this.PartnerId = user.PartnerId;
-  this.IsSuspended = user.IsSuspended || "N";
-  this.FirstName = user.FirstName;
-  this.LastName = user.LastName;
-  this.Address = user.Address;
-  this.Country = user.Country;
-  this.Zip = user.Zip;
-  this.State = user.State;
-  this.City = user.City;
+  this.deviceId = user.deviceId;
+  this.fcmToken = user.fcmToken;
 };
 
 User.login = function (email, Id, result) {
@@ -103,26 +91,10 @@ User.login = function (email, Id, result) {
   );
 };
 
-User.findById = async function (user_id) {
-  const query = `SELECT u.Id,
-  u.Email,
-  u.IsActive,
-  u.DateCreation,
-  u.IsAdmin,
-  u.FirstName,
-  u.LastName,
-  u.Address,
-  u.Country,
-  u.City,
-  u.State,
-  u.Zip,
-  u.Username,
-  u.AccountType,
-  u.IsSuspended,
-  p.ID as profileId
-FROM users as u left join profile as p on p.UserID = u.Id WHERE u.Id = ? `;
-  const values = [user_id];
-  const user = await executeQuery(query, values);
+User.findById = async function (id, domain, deviceId) {
+  const query = `SELECT * from scan_sites as sc left join user as u on u.deviceId = sc.deviceId WHERE sc.profileId = ? and sc.domainName = ? and sc.deviceId = ?`;
+  const values = [id, domain, deviceId];
+  const [user] = await executeQuery(query, values);
   return user;
 };
 
@@ -132,6 +104,45 @@ User.findByUsernameAndEmail = async function (email) {
   const user = await executeQuery(query, values);
   console.log(user);
   return user[0];
+};
+
+User.registerDevice = async function (data) {
+  try {
+    const query = `
+    INSERT INTO user
+    SET fcmToken = '${data.fcmToken}',
+        deviceId = '${data.deviceId}'
+    ON DUPLICATE KEY UPDATE
+        deviceId = VALUES(deviceId),
+        fcmToken = VALUES(fcmToken);
+  `;
+    const user = await executeQuery(query);
+    if (user.insertId) {
+      return user.insertId;
+    }
+  } catch (error) {
+    return error;
+  }
+};
+
+User.addSites = async function (data) {
+  try {
+    const query = "insert into scan_sites set ?";
+    const values = [data];
+    const user = await executeQuery(query, values);
+    if (user.insertId) {
+      return user.insertId;
+    }
+  } catch (error) {
+    return error;
+  }
+};
+
+User.findFcmTokenById = async function (id, domain) {
+  const query = `SELECT u.fcmToken from scan_sites as sc left join user as u on u.deviceId = sc.deviceId WHERE sc.profileId = ? and sc.domainName = ?`;
+  const values = [id, domain];
+  const user = await executeQuery(query, values);
+  return user;
 };
 
 module.exports = User;

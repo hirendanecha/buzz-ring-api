@@ -5,7 +5,10 @@ const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
 var indexRouter = require("./src/routes");
+const environment = require("./src/environments/environment");
 const app = express();
+const admin = require("firebase-admin");
+
 // const https = require("https"),
 (fs = require("fs")), (helmet = require("helmet"));
 
@@ -46,6 +49,10 @@ try {
 } catch (e) {
   console.log(e);
 }
+
+admin.initializeApp({
+  credential: admin.credential.cert(environment.firebaseAdmin),
+});
 
 const port = process.env.PORT || 8080;
 
