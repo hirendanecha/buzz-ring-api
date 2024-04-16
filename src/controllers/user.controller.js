@@ -110,7 +110,7 @@ exports.verifyToken = async function (req, res) {
           const data = {
             deviceId: deviceId,
             profileId: decoded.user.id,
-            domain: domain,
+            domainName: domain,
           };
           const oldUser = await User.findById(
             decoded.user.id,
