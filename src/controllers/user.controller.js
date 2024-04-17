@@ -117,6 +117,9 @@ exports.verifyToken = async function (req, res) {
             domain,
             deviceId
           );
+          const userData = response?.data?.data[0];
+          userData["token"] = token;
+          userData["domain"] = domain;
           console.log("old-user", oldUser);
           if (!oldUser) {
             const newUser = await User.addSites(data);
@@ -126,8 +129,7 @@ exports.verifyToken = async function (req, res) {
             message: "Authorized User",
             success: true,
             registerDeviceId: deviceId,
-            data: response?.data?.data[0],
-            domain: domain,
+            data: userData,
           });
         })
         .catch((error) => {
