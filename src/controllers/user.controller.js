@@ -158,38 +158,37 @@ exports.callNotification = async function (req, res) {
       messageData.notificationToProfileId,
       messageData.domain
     );
-    for (const token of users) {
+    let response = [];
+    // for (const token of users) {
+    const promises = users.map(async (element) => {
+      console.log("token", element.fcmToken);
       const message = {
         data: { title: "call notification", body: JSON.stringify(messageData) },
-        token: token.fcmToken,
-        priority: "high",
+        token: element?.fcmToken,
+        android: {
+          priority: "high", // Set the priority here ('high' or 'normal')
+        },
       };
-      admin
-        .messaging()
-        .send(message)
-        .then((response) => {
-          console.log("Successfully sent message:", response);
-        })
-        .catch((error) => {
-          console.log("Error sending message:", error);
-          res.status(error.errorCode).send("Error sending notification");
-        });
-      // }
+      try {
+        const resMessage = await admin.messaging().send(message);
+        console.log("Successfully sent message:", resMessage);
+        return resMessage;
+      } catch (error) {
+        console.error("Error sending message:", error);
+        throw error;
+      }
+    });
+    try {
+      const responses = await Promise.all(promises);
+      res.send(responses);
+    } catch (error) {
+      console.error("Error sending messages:", error);
+      throw error;
     }
-    console.log("users", users);
-    // for (const item of users) {
-    // const token = item.fcmToken;
-
-    res.send("Notification sent");
   } catch (error) {
     console.log(error);
-    res.status(error.errorCode).send(error);
+    return res.status(500).send(error);
   }
-
-  // return res.send({
-  //   error: false,
-  //   data: data,
-  // });
 };
 
 exports.registerDevice = async function (req, res) {
