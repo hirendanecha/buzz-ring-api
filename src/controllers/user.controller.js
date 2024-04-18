@@ -162,6 +162,7 @@ exports.callNotification = async function (req, res) {
       const message = {
         data: { title: "call notification", body: JSON.stringify(messageData) },
         token: token.fcmToken,
+        priority: "high",
       };
       admin
         .messaging()
