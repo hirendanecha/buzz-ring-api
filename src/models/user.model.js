@@ -92,7 +92,7 @@ User.login = function (email, Id, result) {
 };
 
 User.findById = async function (id, domain, deviceId) {
-  const query = `SELECT * from scan_sites as sc left join user as u on u.deviceId = sc.deviceId WHERE sc.profileId = ? and sc.domainName = ? and sc.deviceId = ?`;
+  const query = `SELECT sc.* from scan_sites as sc left join user as u on u.deviceId = sc.deviceId WHERE sc.profileId = ? and sc.domainName = ? and sc.deviceId = ?`;
   const values = [id, domain, deviceId];
   const [user] = await executeQuery(query, values);
   return user;

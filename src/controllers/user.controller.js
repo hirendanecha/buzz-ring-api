@@ -123,6 +123,8 @@ exports.verifyToken = async function (req, res) {
           console.log("old-user", oldUser);
           if (!oldUser) {
             userData["scanId"] = await User.addSites(data);
+          } else {
+            userData["scanId"] = oldUser.id;
           }
           res.status(200).send({
             message: "Authorized User",
