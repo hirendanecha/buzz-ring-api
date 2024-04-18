@@ -122,20 +122,18 @@ exports.verifyToken = async function (req, res) {
           userData["domain"] = domain;
           console.log("old-user", oldUser);
           if (!oldUser) {
-            const newUser = await User.addSites(data);
-            console.log("newUser", newUser);
+            userData["scanId"] = await User.addSites(data);
           }
           res.status(200).send({
             message: "Authorized User",
             success: true,
-            registerDeviceId: deviceId,
             data: userData,
           });
         })
         .catch((error) => {
           // Handle error
           console.log(error);
-          res.status(error.response.status).send({
+          res.status(500).send({
             message: error.response.statusText,
             success: false,
           });
@@ -201,5 +199,21 @@ exports.registerDevice = async function (req, res) {
     });
   } catch (error) {
     res.status(error.errorCode).send(error);
+  }
+};
+
+exports.deleteProfile = async function (req, res) {
+  try {
+    const { id } = req.params;
+    const data = await User.deleteProfile(id);
+    return res.send({
+      error: false,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    return res.send({
+      error: true,
+      error,
+    });
   }
 };

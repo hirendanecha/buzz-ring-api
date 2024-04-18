@@ -145,4 +145,15 @@ User.findFcmTokenById = async function (id, domain) {
   return user;
 };
 
+User.deleteProfile = async function (id) {
+  if (id) {
+    const query = "delete from scan_sites where id = ?";
+    const values = [id];
+    const deleteUser = await executeQuery(query, values);
+    return deleteUser;
+  } else {
+    return { error: "data not found" };
+  }
+};
+
 module.exports = User;

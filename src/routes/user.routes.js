@@ -11,5 +11,6 @@ router.post("/call-notification/", userController.callNotification);
 router.get("/logout", userController.logout);
 router.get("/:id", userController.findById);
 router.get("/notification/:id", profileController.getNotification);
+router.delete("/delete/:id", userController.deleteProfile);
 
 module.exports = router;
