@@ -115,8 +115,8 @@ exports.verifyToken = async function (req, res) {
           const oldUser = await User.findById(
             decoded.user.id,
             domain,
+            deviceId
           );
-          // deviceId
           const userData = response?.data?.data[0];
           userData["token"] = token;
           userData["domain"] = domain;
@@ -124,11 +124,11 @@ exports.verifyToken = async function (req, res) {
           if (!oldUser) {
             userData["scanId"] = await User.addSites(data);
           } else {
-            // userData["scanId"] = oldUser.id;
-            res.status(400).send({
-              message: "User already connected with other device!",
-              success: false,
-            });
+            userData["scanId"] = oldUser.id;
+            // res.status(200).send({
+            //   message: "User already connected with other device!",
+            //   success: false,
+            // });
           }
           res.status(200).send({
             message: "Authorized User",
