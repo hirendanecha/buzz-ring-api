@@ -91,9 +91,9 @@ User.login = function (email, Id, result) {
   );
 };
 
-User.findById = async function (id, domain, deviceId) {
-  const query = `SELECT sc.* from scan_sites as sc left join user as u on u.deviceId = sc.deviceId WHERE sc.profileId = ? and sc.domainName = ? and sc.deviceId = ?`;
-  const values = [id, domain, deviceId];
+User.findById = async function (id, domain) {
+  const query = `SELECT sc.* from scan_sites as sc WHERE sc.profileId = ? and sc.domainName = ?`;
+  const values = [id, domain];
   const [user] = await executeQuery(query, values);
   return user;
 };
