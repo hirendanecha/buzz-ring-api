@@ -194,6 +194,56 @@ exports.callNotification = async function (req, res) {
     return res.status(500).send(error);
   }
 };
+exports.groupCallNotification = async function (req, res) {
+  try {
+    const messageData = req.body;
+    console.log(messageData);
+    let responseList = [];
+    messageData?.notificationToProfileIds.forEach(async (profileId) => {
+      console.log("profileId", profileId);
+      const users = await User.findFcmTokenById(profileId, messageData.domain);
+      // for (const token of users) {
+      console.log(users);
+      const promises = users.map(async (element) => {
+        console.log("token", element.fcmToken);
+        const message = {
+          data: {
+            title: "call notification",
+            body: JSON.stringify(messageData),
+          },
+          token: element?.fcmToken,
+          android: {
+            priority: "high", // Set the priority here ('high' or 'normal')
+          },
+        };
+        try {
+          const resMessage = await admin.messaging().send(message);
+          console.log("Successfully sent message:", resMessage);
+          return resMessage;
+        } catch (error) {
+          console.error("Error sending message:", error);
+          throw error;
+        }
+      });
+      try {
+        const responses = await Promise.all(promises);
+        console.log(responses);
+        responseList.push(responses);
+      } catch (error) {
+        console.error("Error sending messages:", error);
+        throw error;
+      }
+    });
+
+    if (responseList.length) {
+    } else {
+      res.send([]);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};
 
 exports.registerDevice = async function (req, res) {
   try {
