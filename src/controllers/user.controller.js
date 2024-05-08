@@ -218,6 +218,15 @@ exports.groupCallNotification = async function (req, res) {
           ios: {
             content_available: true,
           },
+          apns: {
+            payload: {
+              aps: {
+                "mutable-content": 1,
+                contentAvailable: true,
+                content_available: true,
+              },
+            },
+          },
         };
         try {
           const resMessage = await admin.messaging().send(message);
