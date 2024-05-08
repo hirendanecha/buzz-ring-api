@@ -215,6 +215,9 @@ exports.groupCallNotification = async function (req, res) {
           android: {
             priority: "high", // Set the priority here ('high' or 'normal')
           },
+          ios: {
+            content_available: true,
+          },
         };
         try {
           const resMessage = await admin.messaging().send(message);
