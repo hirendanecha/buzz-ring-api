@@ -33,8 +33,7 @@
     "open-graph": "^0.2.6",
     "socket.io": "^4.7.1",
     "socket.io-client": "^4.7.2",
-    "stripe": "^12.2.0",
-    "uuid": "^9.0.1"
+    "stripe": "^12.2.0"
   },
   "devDependencies": {
     "aws-sdk": "^2.1415.0",

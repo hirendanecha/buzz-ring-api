@@ -7,8 +7,6 @@ const authorize = require("../middleware/authorize");
 const { Encrypt } = require("../helpers/cryptography");
 const axios = require("axios");
 const admin = require("firebase-admin");
-// import { v4 as uuidv4 } from "uuid";
-const uuidv4 = require("uuid");
 exports.login = async function (req, res) {
   const { email, password } = req.body;
   const user = await User.findByUsernameAndEmail(email);
@@ -166,8 +164,6 @@ exports.callNotification = async function (req, res) {
     );
     let response = [];
     // for (const token of users) {
-    messageData["uuId"] = uuidv4();
-    console.log("Apple uuId",messageData["uuId"]);
     const promises = users.map(async (element) => {
       console.log("token", element.fcmToken);
       const message = {
@@ -203,8 +199,6 @@ exports.groupCallNotification = async function (req, res) {
     const messageData = req.body;
     console.log(messageData);
     let responseList = [];
-    messageData["uuId"] = uuidv4();
-    console.log("Apple uuId",messageData["uuId"]);
     messageData?.notificationToProfileIds.forEach(async (profileId) => {
       console.log("profileId", profileId);
       const users = await User.findFcmTokenById(profileId, messageData.domain);
