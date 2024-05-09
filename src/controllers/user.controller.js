@@ -7,7 +7,8 @@ const authorize = require("../middleware/authorize");
 const { Encrypt } = require("../helpers/cryptography");
 const axios = require("axios");
 const admin = require("firebase-admin");
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
+const uuidv4 = require("uuid");
 exports.login = async function (req, res) {
   const { email, password } = req.body;
   const user = await User.findByUsernameAndEmail(email);
