@@ -169,9 +169,9 @@ exports.callNotification = async function (req, res) {
       const message = {
         data: { title: "call notification", body: JSON.stringify(messageData) },
         token: element?.fcmToken,
-        // android: {
-        //   priority: "high", // Set the priority here ('high' or 'normal')
-        // },
+        android: {
+          priority: "high", // Set the priority here ('high' or 'normal')
+        },
       };
       try {
         const resMessage = await admin.messaging().send(message);
@@ -212,9 +212,9 @@ exports.groupCallNotification = async function (req, res) {
             body: JSON.stringify(messageData),
           },
           token: element?.fcmToken,
-          // android: {
-          //   priority: "high", // Set the priority here ('high' or 'normal')
-          // },
+          android: {
+            priority: "high", // Set the priority here ('high' or 'normal')
+          },
           ios: {
             content_available: true,
           },
