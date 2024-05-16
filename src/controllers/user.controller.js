@@ -170,7 +170,16 @@ exports.callNotification = async function (req, res) {
         data: { title: "call notification", body: JSON.stringify(messageData) },
         token: element?.fcmToken,
         android: {
-          priority: "high", // Set the priority here ('high' or 'normal')
+          priority: "high",
+          // content_available: true, // Android-specific
+        },
+        apns: {
+          payload: {
+            aps: {
+              "mutable-content": 1,
+              contentAvailable: true, // iOS-specific
+            },
+          },
         },
       };
       try {
@@ -213,17 +222,14 @@ exports.groupCallNotification = async function (req, res) {
           },
           token: element?.fcmToken,
           android: {
-            priority: "high", // Set the priority here ('high' or 'normal')
-          },
-          ios: {
-            content_available: true,
+            priority: "high",
+            // content_available: true, // Android-specific
           },
           apns: {
             payload: {
               aps: {
                 "mutable-content": 1,
-                contentAvailable: true,
-                content_available: true,
+                contentAvailable: true, // iOS-specific
               },
             },
           },
