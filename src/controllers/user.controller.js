@@ -169,6 +169,7 @@ exports.callNotification = async function (req, res) {
       const message = {
         data: { title: "call notification", body: JSON.stringify(messageData) },
         token: element?.fcmToken,
+        timeToLive: 30,
         android: {
           priority: "high",
           // content_available: true, // Android-specific
@@ -221,6 +222,7 @@ exports.groupCallNotification = async function (req, res) {
             body: JSON.stringify(messageData),
           },
           token: element?.fcmToken,
+          timeToLive: 30,
           android: {
             priority: "high",
             // content_available: true, // Android-specific
