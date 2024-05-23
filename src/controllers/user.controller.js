@@ -97,7 +97,7 @@ exports.verifyToken = async function (req, res) {
     const decoded = jwt.verify(token, environments.JWT_SECRET_KEY);
     console.log(decoded.user);
     if (decoded.user) {
-      const apiUrl = `https://dev-api.${domain}/api/v1/customers/profile/${decoded.user.id}`;
+      const apiUrl = `https://api.${domain}/api/v1/customers/profile/${decoded.user.id}`;
       console.log(apiUrl);
       axios
         .get(apiUrl, {
