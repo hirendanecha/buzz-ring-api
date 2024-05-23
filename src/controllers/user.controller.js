@@ -177,7 +177,7 @@ exports.callNotification = async function (req, res) {
         apns: {
           payload: {
             aps: {
-              "mutable-content": 1, // iOS-specific
+              "content-available": 1, // iOS-specific
             },
           },
         },
