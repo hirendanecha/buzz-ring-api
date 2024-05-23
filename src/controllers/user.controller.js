@@ -177,8 +177,7 @@ exports.callNotification = async function (req, res) {
         apns: {
           payload: {
             aps: {
-              "mutable-content": 1,
-              contentAvailable: true, // iOS-specific
+              "content-available": 1,
             },
           },
         },
@@ -230,8 +229,7 @@ exports.groupCallNotification = async function (req, res) {
           apns: {
             payload: {
               aps: {
-                "mutable-content": 1,
-                contentAvailable: true, // iOS-specific
+                "content-available": 1,
               },
             },
           },
