@@ -172,6 +172,7 @@ exports.callNotification = async function (req, res) {
         android: {
           priority: "high",
           // content_available: true, // Android-specific
+          ttl: 30,
         },
         apns: {
           payload: {
@@ -228,6 +229,7 @@ exports.groupCallNotification = async function (req, res) {
           token: element?.fcmToken,
           android: {
             priority: "high",
+            ttl: 30,
             // content_available: true, // Android-specific
           },
           apns: {
