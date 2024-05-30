@@ -183,8 +183,8 @@ exports.callNotification = async function (req, res) {
           },
           headers: {
             "apns-priority": "10",
-            // "apns-topic": "buzz.freedom.ring", // your app bundle identifier
-            // "apns-expiration": Math.floor(Date.now() / 1000) + 30, // Message expires in 15 seconds
+            "apns-topic": "buzz.freedom.ring", // your app bundle identifier
+            "apns-expiration": (Math.floor(Date.now() / 1000) + 30).toString(), // Message expires in 15 seconds
           },
         },
       };
@@ -241,8 +241,10 @@ exports.groupCallNotification = async function (req, res) {
             },
             headers: {
               "apns-priority": "10",
-              // "apns-topic": "buzz.freedom.ring", // your app bundle identifier
-              // "apns-expiration": Math.floor(Date.now() / 1000) + 30, // Message expires in 15 seconds
+              "apns-topic": "buzz.freedom.ring", // your app bundle identifier
+              "apns-expiration": (
+                Math.floor(Date.now() / 1000) + 30
+              ).toString(), // Message expires in 15 seconds
             },
           },
         };
