@@ -178,13 +178,14 @@ exports.callNotification = async function (req, res) {
           payload: {
             aps: {
               "mutable-content": 1,
-              contentAvailable: true, // iOS-specific
+              "content-available": 1,
             },
           },
           headers: {
             "apns-priority": "10",
             "apns-topic": "buzz.freedom.ring", // your app bundle identifier
             "apns-expiration": (Math.floor(Date.now() / 1000) + 30).toString(), // Message expires in 15 seconds
+            "apns-push-type": "background",
           },
         },
       };
@@ -236,7 +237,7 @@ exports.groupCallNotification = async function (req, res) {
             payload: {
               aps: {
                 "mutable-content": 1,
-                contentAvailable: true, // iOS-specific
+                "content-available": 1,
               },
             },
             headers: {
@@ -245,6 +246,7 @@ exports.groupCallNotification = async function (req, res) {
               "apns-expiration": (
                 Math.floor(Date.now() / 1000) + 30
               ).toString(), // Message expires in 15 seconds
+              "apns-push-type": "background",
             },
           },
         };
