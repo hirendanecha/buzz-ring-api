@@ -172,20 +172,13 @@ exports.callNotification = async function (req, res) {
         android: {
           priority: "high",
           // content_available: true, // Android-specific
-          ttl: 30,
         },
         apns: {
           payload: {
             aps: {
               "mutable-content": 1,
-              "content-available": 1,
+              contentAvailable: true, // iOS-specific
             },
-          },
-          headers: {
-            "apns-priority": "10",
-            "apns-topic": "buzz.freedom.ring", // your app bundle identifier
-            "apns-expiration": (Math.floor(Date.now() / 1000) + 30).toString(), // Message expires in 15 seconds
-            "apns-push-type": "background",
           },
         },
       };
@@ -230,23 +223,14 @@ exports.groupCallNotification = async function (req, res) {
           token: element?.fcmToken,
           android: {
             priority: "high",
-            ttl: 30,
             // content_available: true, // Android-specific
           },
           apns: {
             payload: {
               aps: {
                 "mutable-content": 1,
-                "content-available": 1,
+                contentAvailable: true, // iOS-specific
               },
-            },
-            headers: {
-              "apns-priority": "10",
-              "apns-topic": "buzz.freedom.ring", // your app bundle identifier
-              "apns-expiration": (
-                Math.floor(Date.now() / 1000) + 30
-              ).toString(), // Message expires in 15 seconds
-              "apns-push-type": "background",
             },
           },
         };
