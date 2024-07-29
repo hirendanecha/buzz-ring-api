@@ -189,7 +189,7 @@ exports.callNotification = async function (req, res) {
         },
       };
       try {
-        const resMessage = await admin.messaging().send(message);
+        const resMessage = await admin?.messaging()?.send(message);
         console.log("Successfully sent message:", resMessage);
         return resMessage;
       } catch (error) {
